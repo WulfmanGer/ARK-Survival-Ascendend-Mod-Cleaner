@@ -32,5 +32,5 @@ Dieses PowerShell-Skript:
 
 ```powershell
 $gamePath = "G:\Spiele\Steam\steamapps\common\ARK Survival Ascended"
-
-📌 Tipp: Rechtsklick auf die Datei mod_cleaner.ps1 und „Mit PowerShell ausführen“ wählen. Alternativ: PowerShell öffnen, mit cd ins Verzeichnis wechseln und .\mod_cleaner.ps1 eingeben.
+```
+4. Starte das Script: Rechtsklick auf die Datei mod_cleaner.ps1 und „Mit PowerShell ausführen“ wählen. Alternativ: PowerShell öffnen, mit cd ins Verzeichnis wechseln und .\mod_cleaner.ps1 eingeben.
