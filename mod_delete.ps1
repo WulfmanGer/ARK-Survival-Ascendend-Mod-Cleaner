@@ -15,7 +15,7 @@
     Tested on   : Windows 11 • PowerShell 7.5.1
 
 .LICENSE
-    MIT License (see repository for details)
+    ???
 #>
 
 
