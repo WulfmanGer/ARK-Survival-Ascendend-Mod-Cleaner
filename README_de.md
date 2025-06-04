@@ -26,7 +26,7 @@ Dieses PowerShell-Skript:
 
 ### Anleitung
 
-1. Lade die Datei `mod_cleaner.ps1` herunter
+1. Lade die Datei `mod_cleaner.ps1` herunter (siehe unten)
 2. Öffne sie in einem Texteditor
 3. Trage deinen Installationspfad zu ARK Survival Ascended ein:
 
@@ -34,3 +34,11 @@ Dieses PowerShell-Skript:
 $gamePath = "G:\Spiele\Steam\steamapps\common\ARK Survival Ascended"
 ```
 4. Starte das Script: Rechtsklick auf die Datei mod_cleaner.ps1 und „Mit PowerShell ausführen“ wählen. Alternativ: PowerShell öffnen, mit cd ins Verzeichnis wechseln und .\mod_cleaner.ps1 eingeben.
+
+
+### PowerShell-Skript von GitHub herunterladen
+1. Öffne das Skript auf GitHub (z. B. mod_cleaner.ps1)
+2. Klicke oben rechts auf „Raw“
+3. Jetzt zeigt dein Browser nur den Skriptinhalt an.
+4. Rechtsklick → „Speichern unter…“
+→ Achte darauf, dass die Datei als .ps1 gespeichert wird (nicht .txt oder .html)
