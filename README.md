@@ -1,4 +1,4 @@
-# ARK: Survival Ascended – Mod Remover Script 🇩🇪
+# ARK: Survival Ascended – Mod Remover Script
 
 🧹 PowerShell script for cleaning up server-side mods from the `library.json` of the game **ARK: Survival Ascended**. Custom cosmetics will not be deleted! The reason for this is that broken mods that are no longer needed can still cause problems. For me, it was the "invisible inventory" bug. Server-side mods are reloaded when you join a server with the corresponding mods.
 
@@ -32,3 +32,5 @@ This PowerShell script:
 
 ```powershell
 $gamePath = "G:\Games\Steam\steamapps\common\ARK Survival Ascended"
+```
+4. Start the Script: Right-click the file mod_cleaner.ps1 and choose “Run with PowerShell”. Alternatively, open PowerShell, navigate to the folder using cd, and run .\mod_cleaner.ps1
