@@ -26,7 +26,7 @@ $gamePath = "G:\Spiele\Steam\steamapps\common\ARK Survival Ascended"
 # === DO NOT EDIT BELOW ===
 $jsonPath = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\ModsUserData\83374\library.json"
 $backupJsonPath = "$jsonPath.bak"
-$logPath = Join-Path $gamePath "mod_delete.log"
+$logPath = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\ModsUserData\83374\mod_delete.log"
 
 $modsDir = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\Mods\83374"
 $modsBackupDir = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\Mods_backup\83374"
