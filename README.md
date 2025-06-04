@@ -34,3 +34,10 @@ This PowerShell script:
 $gamePath = "G:\Games\Steam\steamapps\common\ARK Survival Ascended"
 ```
 4. Start the Script: Right-click the file mod_cleaner.ps1 and choose “Run with PowerShell”. Alternatively, open PowerShell, navigate to the folder using cd, and run .\mod_cleaner.ps1
+
+### Download the PowerShell script from GitHub
+
+1. Open the script on GitHub (e.g., mod_cleaner.ps1)
+2. Click "Raw" in the top right corner
+3. Your browser will now only display the script content.
+4. Right-click → "Save As..." → Make sure the file is saved as .ps1 (not .txt or .html)
