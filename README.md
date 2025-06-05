@@ -1,3 +1,6 @@
+## Important note
+We strongly recommend using PowerShell 7.x. Using PowerShell 5.1 (the default) may cause errors (saving the script as a UTF8 BOM (Notepad++, for example) helps). PowerShell 7.x is installed via the MS Store - search for "Powershell" (provided by Microsoft). Then install. More information to follow! **lease share your feedback with 5.1**! I don't have the time right now to test it thoroughly.
+
 # ARK: Survival Ascended – Mod Cleaner Script
 
 🧹 PowerShell script for cleaning up server-side mods from the `library.json` of the game **ARK: Survival Ascended**. Custom cosmetics will not be deleted! The reason for this is that broken mods that are no longer needed can still cause problems. For me, it was the "invisible inventory" bug. Server-side mods are reloaded when you join a server with the corresponding mods.
