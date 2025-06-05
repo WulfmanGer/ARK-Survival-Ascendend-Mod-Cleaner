@@ -1,4 +1,4 @@
-# WICHTIGER HINWEIS
+## WICHTIGER HINWEIS
 Es wird dringend empfohlen PowerShell 7.x zu nutzen. Bei 5.1 (Standard) kann es zu fehlern kommen (hier hilft es das Script als UTF8-BOM zu speichern (notepad++ z.b.)). PowerShell 7.x installiert man via MS Store - Nach "Powershell" (Anbieter ist Microsoft) suchen.  Dann installieren. Weitere Infos folgen! Feedback mit 5.1 bitte mitteilen! Mir fehlt gerade die Zeit das ausführlich zu testen. 
 
 # ARK: Survival Ascended – Mod Cleaner Script 🇩🇪 
