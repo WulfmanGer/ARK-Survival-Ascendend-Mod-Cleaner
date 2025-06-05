@@ -110,10 +110,3 @@ Write-Host "$modsBackupDir" -ForegroundColor Cyan
 
 
 Write-Host "`nPlease test the game now. If everything works, you can delete the backups manually."
-
-
-#$open = Read-Host "open backup folder? (yes/no)"
-#if ($open -eq "yes") {
-#    Start-Process $modsBackupDir
-#    Start-Process (Split-Path $backupJsonPath)
-#}
