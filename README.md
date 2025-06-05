@@ -33,7 +33,7 @@ This PowerShell script:
 ```powershell
 $gamePath = "G:\Games\Steam\steamapps\common\ARK Survival Ascended"
 ```
-4. Start the Script: Right-click the file mod_cleaner.ps1 and choose “Run with PowerShell”. Alternatively, open PowerShell, navigate to the folder using cd, and run .\mod_cleaner.ps1
+4. Run the script: Open File Explorer with the folder where you saved mod_delete.ps1. Press SHIFT+right-click -> select "Open PowerShell window here." Run the script with .\mod_delete.ps1
 
 ### Download the PowerShell script from GitHub
 
