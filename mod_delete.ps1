@@ -15,7 +15,8 @@
     Tested on   : Windows 11 • PowerShell 7.5.1
 
 .LICENSE
-    ???
+    GNU General Public License v3.0
+	(C) 2025 WulfmanGER – github.com/WulfmanGER
 #>
 
 
