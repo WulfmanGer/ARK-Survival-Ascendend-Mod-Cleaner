@@ -10,8 +10,8 @@
 .NOTES
     Author      : WulfmanGER
     Repository  : https://github.com/WulfmanGer/ARK-Survival-Ascendend-Mod-Cleaner
-    Version     : 1.0.0
-    Last Update : 2025-06-05
+    Version     : 1.0.1
+    Last Update : 2025-06-20
     Tested on   : Windows 11 • PowerShell 7.5.1
 
 .LICENSE
@@ -31,6 +31,13 @@ $logPath = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\ModsUserD
 
 $modsDir = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\Mods\83374"
 $modsBackupDir = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\Mods_backup\83374"
+
+# Delete the log file if it exists
+if (Test-Path $logPath) {
+    Remove-Item -Path $logPath -Force
+}
+# Create a new empty log file with UTF-8 encoding and no extra lines
+[System.IO.File]::WriteAllText($logPath, "", [System.Text.Encoding]::UTF8)
 
 # === Backup JSON file ===
 Copy-Item -Path $jsonPath -Destination $backupJsonPath -Force
