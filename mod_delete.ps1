@@ -10,8 +10,8 @@
 .NOTES
     Author      : WulfmanGER
     Repository  : https://github.com/WulfmanGer/ARK-Survival-Ascendend-Mod-Cleaner
-    Version     : 1.0.1
-    Last Update : 2025-06-20
+    Version     : 1.0.2
+    Last Update : 2025-06-24
     Tested on   : Windows 11 • PowerShell 7.5.1
 
 .LICENSE
@@ -56,9 +56,9 @@ Write-Host $modsBackupDir
 # === Load and filter JSON ===
 $data = Get-Content -Raw -Path $jsonPath | ConvertFrom-Json
 
-# Identify mods to delete (everything that is NOT a Custom Cosmetic, ID 6844)
+# Identify mods to delete (everything that is NOT a Custom Cosmetic, ID 6844; or status="Deleted")
 $modsToDelete = $data.installedMods | Where-Object {
-    $_.details.primaryCategoryId -ne 6844
+	$_.details.primaryCategoryId -ne 6844 -or $_.details.status -eq "Deleted"
 }
 
 # Write delete log (pathOnDisk | name)
@@ -82,7 +82,7 @@ if ($confirm -ne "yes") {
 
 # === Modify JSON ===
 $data.installedMods = $data.installedMods | Where-Object {
-    $_.details.primaryCategoryId -eq 6844
+	$_.details.primaryCategoryId -eq 6844 -and $_.details.status -ne "Deleted"
 }
 
 # Save updated JSON
