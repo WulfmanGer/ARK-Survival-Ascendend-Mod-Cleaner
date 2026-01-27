@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    ARK: Survival Ascended Mod Cleaner – removes all non-Custom Cosmetic mods.
+    ARK: Survival Ascended Mod Cleaner – removes all non-Custom Cosmetic mods or rejected Custom Cusmetics
 
 .DESCRIPTION
     • Creates backups of library.json and the Mods folder
@@ -10,8 +10,8 @@
 .NOTES
     Author      : WulfmanGER
     Repository  : https://github.com/WulfmanGer/ARK-Survival-Ascendend-Mod-Cleaner
-    Version     : 1.0.2
-    Last Update : 2025-06-24
+    Version     : 1.0.3
+    Last Update : 2026-01-27
     Tested on   : Windows 11 • PowerShell 7.5.1
 
 .LICENSE
@@ -25,22 +25,28 @@
 $gamePath = "G:\Spiele\Steam\steamapps\common\ARK Survival Ascended"
 
 # === DO NOT EDIT BELOW ===
-$jsonPath = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\ModsUserData\83374\library.json"
+$jsonId = "83374"
+$jsonPath = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\ModsUserData\$jsonId\library.json"
 $backupJsonPath = "$jsonPath.bak"
-$logPath = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\ModsUserData\83374\mod_delete.log"
+$logPath = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\ModsUserData\$jsonId\mod_delete.log"
 
-$modsDir = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\Mods\83374"
-$modsBackupDir = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\Mods_backup\83374"
+$modsDir = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\Mods\$jsonId"
+$modsBackupDir = Join-Path $gamePath "ShooterGame\Binaries\Win64\ShooterGame\Mods_backup\$jsonId"
 
 # Delete the log file if it exists
 if (Test-Path $logPath) {
     Remove-Item -Path $logPath -Force
 }
-# Create a new empty log file with UTF-8 encoding and no extra lines
+# Create a new empty log file with UTF-8 encoding
 [System.IO.File]::WriteAllText($logPath, "", [System.Text.Encoding]::UTF8)
 
 # === Backup JSON file ===
-Copy-Item -Path $jsonPath -Destination $backupJsonPath -Force
+if (Test-Path $jsonPath) {
+    Copy-Item -Path $jsonPath -Destination $backupJsonPath -Force
+} else {
+    Write-Error "JSON file not found at $jsonPath"
+    exit
+}
 
 # === Backup MODS directory ===
 if (-Not (Test-Path $modsBackupDir)) {
@@ -49,16 +55,33 @@ if (-Not (Test-Path $modsBackupDir)) {
 
 Write-Host "Backing up Mods directory..."
 Copy-Item -Path "$modsDir\*" -Destination $modsBackupDir -Recurse -Force
+Write-Host "Mods backup created at: $modsBackupDir"
 
-Write-Host "Mods backup created at:"
-Write-Host $modsBackupDir
+# === Load JSON ===
+$jsonRaw = Get-Content -Raw -Path $jsonPath
+$data = $jsonRaw | ConvertFrom-Json
 
-# === Load and filter JSON ===
-$data = Get-Content -Raw -Path $jsonPath | ConvertFrom-Json
+# Helper function to check if a mod is a Custom Cosmetic (ID 6844)
+function Is-Cosmetic($mod) {
+    # Check primary category
+    if ($mod.details.primaryCategoryId -eq 6844) { return $true }
+    # Check all assigned categories in the array
+    foreach ($category in $mod.details.categories) {
+        if ($category.iD -eq 6844) { return $true }
+    }
+    return $false
+}
 
-# Identify mods to delete (everything that is NOT a Custom Cosmetic, ID 6844; or status="Deleted")
+# === Identify mods to delete ===
+# Delete if: (It is NOT a cosmetic) OR (Status is 'Deleted')
 $modsToDelete = $data.installedMods | Where-Object {
-	$_.details.primaryCategoryId -ne 6844 -or $_.details.status -eq "Deleted"
+    $isCosmetic = Is-Cosmetic $_
+    ($isCosmetic -eq $false) -or ($_.status -eq "Deleted")
+}
+
+if ($null -eq $modsToDelete -or $modsToDelete.Count -eq 0) {
+    Write-Host "`nNo mods found that match the deletion criteria." -ForegroundColor Green
+    exit
 }
 
 # Write delete log (pathOnDisk | name)
@@ -68,43 +91,51 @@ $logEntries = $modsToDelete | ForEach-Object {
 $logEntries | Set-Content -Path $logPath -Encoding UTF8
 
 # Show delete log
-Write-Host "`nThe following mods are proposed for deletion:`n"
-Get-Content $logPath | ForEach-Object { Write-Host $_ }
-Write-Host ""
+Write-Host "`nThe following mods are proposed for deletion (Non-Cosmetics or Status:Deleted):`n"
+$logEntries | ForEach-Object { Write-Host " - $_" }
 
 # Confirm before continuing
-$confirm = Read-Host "Do you want to remove these mods from the JSON file? (yes/no)"
-
+$confirm = Read-Host "`nDo you want to remove these mods from the JSON file and delete their folders? (yes/no)"
 if ($confirm -ne "yes") {
     Write-Host "Aborted by user."
     exit
 }
 
-# === Modify JSON ===
-$data.installedMods = $data.installedMods | Where-Object {
-	$_.details.primaryCategoryId -eq 6844 -and $_.details.status -ne "Deleted"
+# === Modify JSON Object ===
+# Keep if: (It IS a cosmetic) AND (Status is NOT 'Deleted')
+$filteredMods = $data.installedMods | Where-Object {
+    $isCosmetic = Is-Cosmetic $_
+    ($isCosmetic -eq $true) -and ($_.status -ne "Deleted")
 }
 
-# Save updated JSON
-$data | ConvertTo-Json -Depth 100 -Compress | Set-Content -Path $jsonPath -Encoding UTF8
+# Force array structure even if only 1 mod remains
+$data.installedMods = @($filteredMods)
 
-Write-Host "`nMods removed from JSON. File updated."
-# === Delete MOD-Folders  ===
-Write-Host "`nDelete associated mod folders..."
+# Convert to single-line JSON string
+$newJsonString = $data | ConvertTo-Json -Depth 100 -Compress
 
+# === Save JSON with UTF-8-BOM and Windows CRLF ===
+$utf8WithBom = New-Object System.Text.UTF8Encoding($true)
+# Ensure Windows Line Endings (CRLF)
+$newJsonString = $newJsonString -replace "`n", "`r`n"
+[System.IO.File]::WriteAllText($jsonPath, $newJsonString, $utf8WithBom)
+
+Write-Host "`nMods removed from JSON. File updated (UTF-8-BOM, Single-line)."
+
+# === Delete MOD-Folders ===
+Write-Host "Deleting associated mod folders..."
 foreach ($mod in $modsToDelete) {
-    $relativePath = $mod.pathOnDisk -replace "^83374[\\/]", ""
+    # Extract folder name from pathOnDisk (e.g., "83374/12345" -> "12345")
+    $relativePath = $mod.pathOnDisk -replace "^$jsonId[\\/]", ""
     $modPath = Join-Path $modsDir $relativePath
-
+    
     if (Test-Path $modPath) {
         try {
-            Remove-Item -Path $modPath -Recurse -Force -ErrorAction Stop
-            Write-Host "Deleted: $modPath"
+            Remove-Item $modPath -Recurse -Force -ErrorAction Stop
+            Write-Host "Deleted folder: $relativePath"
         } catch {
-            Write-Warning "Could not delete: $modPath - $_"
+            Write-Warning "Could not delete folder: $modPath"
         }
-    } else {
-        Write-Warning "Path not found: $modPath"
     }
 }
 
@@ -115,6 +146,5 @@ Write-Host "📄 JSON Backup: " -NoNewline
 Write-Host "$backupJsonPath" -ForegroundColor Cyan
 Write-Host "📁 Mods Backup: " -NoNewline
 Write-Host "$modsBackupDir" -ForegroundColor Cyan
-
 
 Write-Host "`nPlease test the game now. If everything works, you can delete the backups manually."
