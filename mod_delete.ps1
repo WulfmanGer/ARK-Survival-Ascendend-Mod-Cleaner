@@ -10,8 +10,8 @@
 .NOTES
     Author      : WulfmanGER
     Repository  : https://github.com/WulfmanGer/ARK-Survival-Ascendend-Mod-Cleaner
-    Version     : 1.0.3
-    Last Update : 2026-01-27
+    Version     : 1.0.4
+    Last Update : 2026-01-30
     Tested on   : Windows 11 • PowerShell 7.5.1
 
 .LICENSE
@@ -76,7 +76,15 @@ function Is-Cosmetic($mod) {
 # Delete if: (It is NOT a cosmetic) OR (Status is 'Deleted')
 $modsToDelete = $data.installedMods | Where-Object {
     $isCosmetic = Is-Cosmetic $_
-    ($isCosmetic -eq $false) -or ($_.status -eq "Deleted")
+    
+    # NEW LOGIC: 
+    # Delete if: 
+    # 1. It's NOT a cosmetic 
+    # 2. OR local status is 'Deleted' 
+    # 3. OR CurseForge status (details) is 'Deleted'
+    ($isCosmetic -eq $false) -or 
+    ($_.status -eq "Deleted") -or 
+    ($_.details.status -eq "Deleted")
 }
 
 if ($null -eq $modsToDelete -or $modsToDelete.Count -eq 0) {
@@ -105,9 +113,11 @@ if ($confirm -ne "yes") {
 # Keep if: (It IS a cosmetic) AND (Status is NOT 'Deleted')
 $filteredMods = $data.installedMods | Where-Object {
     $isCosmetic = Is-Cosmetic $_
-    ($isCosmetic -eq $true) -and ($_.status -ne "Deleted")
+    # Keep only if it IS a cosmetic AND neither status is 'Deleted'
+    ($isCosmetic -eq $true) -and 
+    ($_.status -ne "Deleted") -and 
+    ($_.details.status -ne "Deleted")
 }
-
 # Force array structure even if only 1 mod remains
 $data.installedMods = @($filteredMods)
 
